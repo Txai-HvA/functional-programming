@@ -26,49 +26,43 @@ function convertToList(givenList) {
   }
 }
 
-// function removeWords(givenValue) {
-//   console.log("oooooooooooooooooooooooooooooooo")
-//   if(String(givenValue).indexOf('donker')) {
-//     console.log("oooooooooooooooooooooooooooooooo")
-//   }
-// }
+let old_key;
+let new_key;
+
+let oogKleur;
 
 app.get('/', function (req, res) {
 
-  oudeDataset = dataset;
 
-  dataset.forEach(user => {
+  for(i = 0; i < dataset.length; i++) {
 
-    questions = Object.keys(user);
-    answers = Object.values(user);
+    old_key = dataset[i];
+    new_key = old_key;
 
-    for(i = 0; i < questions.length; i++) {
+
+    oogKleur = String(old_key[Object.keys(old_key)[1]]);
+
+    if(oogKleur == "donkerbruin") {
+
       
-      answers[i] = camelCase(String(answers[i]), {pascalCase: true});
+      new_key[Object.keys(new_key)[1]] = "test";
 
-      if(i == 8) {
-        /*Als de vraag "Welke kleur kledingstukken heb je aan vandaag? 
-        (Meerdere antwoorden mogelijk natuurlijk...)" is, zet antwoord om naar een Array */
-        answers[i] = convertToList(answers[i]);
-      }
-    }
+      Object.defineProperties(
+        dataset[i],
+        new_key,
+        Object.getOwnPropertyDescriptor(dataset[i], old_key)
+      )
+      delete dataset[i][old_key];
 
-    userCount++;
+      
+    }  
+    console.log(dataset[i])
 
-    nieuweDataset.push(answers)
-  });
+    // if(oogKleur.indexOf('-') >= 0) {
+    //   console.log("streepje")
+    // }
 
-
-//////////////////////////////WIP
-// for(i = 0; i < dataset.length; i++) {
-
-//     Object.defineProperties(
-//       dataset[i],
-//       nieuweDataset[i],
-//       Object.getOwnPropertyDescriptor(dataset[i], oudeDataset[i])
-//     )
-//     delete dataset[i][oudeDataset[i]];
-// }
+  }
 
   res.send("test");
 })
