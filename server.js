@@ -39,12 +39,10 @@ app.get('/', function (req, res) {
     old_key = dataset[i];
     new_key = old_key;
 
-
-    oogKleur = String(old_key[Object.keys(old_key)[1]]);
+    oogKleur = String(old_key[Object.keys(old_key)[1]]).toLowerCase();
 
     if(oogKleur == "donkerbruin") {
 
-      
       new_key[Object.keys(new_key)[1]] = "test";
 
       Object.defineProperties(
@@ -53,9 +51,8 @@ app.get('/', function (req, res) {
         Object.getOwnPropertyDescriptor(dataset[i], old_key)
       )
       delete dataset[i][old_key];
-
-      
     }  
+
     console.log(dataset[i])
 
     // if(oogKleur.indexOf('-') >= 0) {
