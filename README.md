@@ -1,5 +1,13 @@
 # functional-programming
 
+This project edits data...
+- if list of colors aren't sorted by alphabet
+- if eye colors aren't written in a certain format ("groenblauw" > "Blauw - Groen")
+- if words don't start with capitals letter
+- if there are weird characters being used
+- if there are empty fields
+
+
 ## Installation
 
 Be sure to have Git installed on your pc.
