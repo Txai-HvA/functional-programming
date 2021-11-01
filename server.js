@@ -10,10 +10,10 @@ const jsonString = fs.readFileSync('./tech-track-dataset.json');
 const dataset = JSON.parse(jsonString);
 //Bron https://medium.com/@osiolabs/read-write-json-files-with-node-js-92d03cc82824
 
+
 // Variabellen
 let old_key;
 let new_key;
-let aantalGebruikers = 0;
 let oogKleur;
 let kledingKleuren = [];
 let newList = [];
@@ -38,8 +38,6 @@ function changeKey(index, newValue) {
 
 //Vervangt lege velden met "Geen antwoord"
 function vervangLegeVelden() {
-  aantalVelden = Object.keys(old_key).length;
-
   for(j = 0; j < Object.keys(old_key).length; j++) {
     veld = old_key[Object.keys(old_key)[j]];
     if(veld == null || veld == "") {
@@ -124,32 +122,33 @@ function wijzigOogkleur() {
 
 
 //Sorteert een array op alfabetische volgorde
-function sortList(arr) {
+function sortList(string) {
   //Checked of het gegeven antwoord komma's bevat en dus een array is
-  if(arr.indexOf(',') >= -1) {
+  if(string.indexOf(',') >= -1) {
     //Split antwoorden op komma
-    newList = arr.split(", ");
+    newList = string.split(", ");
     //Zorgt ervoor dat elk woord begint met een hoofdletter
     newList = newList.map(item => camelCase(item, {pascalCase: true}));
 
     //Sorteert op alfabetische volgorde
     newList.sort();
 
+    totaalAantalKleren += newList.length;
+
     return newList;
   }
 }
 
+let aantalGebruikers = 0;
 function wijzigKledingKleuren() {
-  kledingKleuren = String(old_key[Object.keys(old_key)[8]]).toLowerCase();
-  kledingKleuren = sortList(kledingKleuren);
-  changeKey(8, String(kledingKleuren));
+  //Als het aantalGebruikers lager is dan de lengte van de dataset, wijzig en sorteer
+  if(aantalGebruikers < dataset.length) {
+    kledingKleuren = String(old_key[Object.keys(old_key)[8]]).toLowerCase();
+    kledingKleuren = sortList(kledingKleuren);
+    changeKey(8, String(kledingKleuren));
+    aantalGebruikers++;
+  }
 }
-
-function telAantalKledingStukken() {
-  totaalAantalKleren += newList.length;
-  
-}
-
 
 
 
@@ -187,15 +186,12 @@ function toonOvereenkomsten() {
 
 
 
-
-
-
 app.get('/', function (req, res) {
-  aantalGebruikers = 1;
-  
+
+
   for(i = 0; i < dataset.length; i++) {
 
-    console.log(`\n--- Gebruiker ${aantalGebruikers} ---------------------------------------------------------`);
+    console.log(`\n--- Gebruiker ${i+1} ---------------------------------------------------------`);
     old_key = dataset[i];
     new_key = old_key;
 
@@ -204,15 +200,10 @@ app.get('/', function (req, res) {
     vergelijkKleuren();
     vervangLegeVelden();
     vervangRareChars();
-    telAantalKledingStukken();
 
     console.log(`Wat is je oogkleur? : ${dataset[i]["Wat is je oogkleur?"]}`);
     console.log(`Welke kleur kledingstukken heb je aan vandaag? : ${dataset[i][ "Welke kleur kledingstukken heb je aan vandaag? (Meerdere antwoorden mogelijk natuurlijk...)"]}`);
-  
-    aantalGebruikers++;
   }
-
- 
 
   toonOvereenkomsten();
 
