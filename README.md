@@ -1,11 +1,14 @@
 # functional-programming
 
-This project edits data...
-- if list of colors aren't sorted by alphabet
-- if eye colors aren't written in a certain format ("groenblauw" > "Blauw - Groen")
-- if words don't start with capitals letter
-- if there are weird characters being used
-- if there are empty fields
+This project...
+- sorts colors alphabetically 
+- corrects eye colors if they aren't written in a certain format ("groenblauw" > "Blauw - Groen")
+- removes the words "donker" and "licht" from colors
+- makes the first letter of a word capitilized
+- checks if weird characters are being used
+- replaced empty fields with something else
+- shows the amount of eyes per color
+- compares eye color and the color(s) of the users clothes to see if they are the same
 
 
 ## Installation
