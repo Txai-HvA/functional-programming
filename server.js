@@ -4,6 +4,7 @@ const app = express();
 const path = require('path');
 const router = express.Router();
 app.use(express.static('public/css'));
+const dotenv = require('dotenv').config()
 
 const fs = require('fs');
 const jsonString = fs.readFileSync('./tech-track-dataset.json');
@@ -226,8 +227,8 @@ app.listen(3000);
 //LASTFM API
 const API = require('last.fm.api'),
 api = new API({ 
-  apiKey: 'b10dc8ca671bec8f905ba180a76b4706', 
-  apiSecret: '99c51882678becd98387819f8f6a0a83'
+  apiKey: process.env.KEY,
+  apiSecret: process.env.SECRET 
 });
 
 //LASTFM variabelen
