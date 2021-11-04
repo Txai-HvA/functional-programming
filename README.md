@@ -10,6 +10,8 @@ This project...
 - shows the amount of eyes per color
 - compares eye color and the color(s) of the users clothes to see if they are the same
 
+![Part of dataset](https://i.gyazo.com/40692fbc9495954b94b367aad6adfc15.png)
+![Cleaning result](https://i.gyazo.com/0ca16d68e09234f121e19a590aa20932.png)
 
 ## Installation
 
