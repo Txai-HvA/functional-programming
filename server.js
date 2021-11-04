@@ -167,10 +167,11 @@ function compareColors() {
   let doColorsMatch = false;
   doColorsMatch = String(clothesColor).toLowerCase().indexOf(eyeColor.toLowerCase()) >= 0;
   if(doColorsMatch) {
-    console.log(`Oogkleur komt WEL overeen met 1 van de kledingstukken.`);
+    messageWord = "WEL"
   } else {
-    console.log("Oogkleur komt NIET overeen met 1 van de kledingstukken.");
+    messageWord = "NIET"
   }
+  console.log(`Oogkleur komt ${messageWord} overeen met 1 van de kledingstukken.`);
 }
 
 
@@ -205,11 +206,14 @@ app.get('/', function (req, res) {
   showAmountOfEyesPerColor();
   showColorMatches();
 
+  //getLastFMData();
+
   //__dirname zorgt ervoor dat het automatisch naar mijn project folder ga
   res.sendFile(path.join(__dirname+'/index.html'), dataset);
 })
 
 app.listen(3000);
+
 
 
 
@@ -379,7 +383,6 @@ function compareLists(arrOfLists) {
     
     list1.forEach(item1 => {
       list2.forEach(item2 => {
-
         //Als item1 en item2 een liedje is...
         if ('songName' in item1 && 'songName' in item2 ) {
            //Als beide nummers dezelfde naam hebben, voeg toe aan sameSongs
@@ -398,7 +401,6 @@ function compareLists(arrOfLists) {
     //Leegt listsToBeCompared, zodat die bij de volgende vergelijking gebruikt kan worden
     listsToBeCompared.length = 0;
 
-    
     console.log(`\n--- Artiesten die zowel in jouw top ${limit} staat, als in de ${genre} top ${limit} ---------------------------------------------------------`);
     if(sameArtists.length > 0) {
       console.log(sameArtists);
@@ -447,7 +449,7 @@ function getLastFMData() {
     .catch((message) => {
       console.log("Error: " + message);
     })
-
+  //Bron https://www.youtube.com/watch?v=DHvZLI7Db8E
 }
 
 getLastFMData()
