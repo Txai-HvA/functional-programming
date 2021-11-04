@@ -4,7 +4,7 @@ const app = express();
 const path = require('path');
 const router = express.Router();
 app.use(express.static('public/css'));
-const dotenv = require('dotenv').config()
+const dotenv = require('dotenv').config();
 app.listen(3000);
 
 const fs = require('fs');
@@ -86,7 +86,7 @@ function increaseAmountOfEyesColor(color) {
 
 //Toont het aantal ogen per kleur
 function showAmountOfEyesPerColor() {
-  console.log(`Aantal blauwe ogen: ${amountOfBlueEyes}\nAantal bruine ogen: ${amountOfBrownEyes}\nAantal grijze ogen: ${amountOfGreyEyes}\nAantal groene ogen: ${amountOfGreenEyes}\n`)
+  console.log(`Aantal blauwe ogen: ${amountOfBlueEyes}\nAantal bruine ogen: ${amountOfBrownEyes}\nAantal grijze ogen: ${amountOfGreyEyes}\nAantal groene ogen: ${amountOfGreenEyes}\n`);
 }
 
 
@@ -121,7 +121,7 @@ function editEyeColor() {
     filterOutWords(eyeColor);
     //Veranderd de eerste letter van eyeColor naar een hoofdletter
     changeKey(1, camelCase(eyeColor, {pascalCase: true}));
-    writeEyeColorTheSameWay ();
+    writeEyeColorTheSameWay();
     amountOfUsers++;
   }
 }
@@ -168,9 +168,9 @@ function compareColors() {
   let doColorsMatch = false;
   doColorsMatch = String(clothesColor).toLowerCase().indexOf(eyeColor.toLowerCase()) >= 0;
   if(doColorsMatch) {
-    messageWord = "WEL"
+    messageWord = "WEL";
   } else {
-    messageWord = "NIET"
+    messageWord = "NIET";
   }
   console.log(`Oogkleur komt ${messageWord} overeen met 1 van de kledingstukken.`);
 }
@@ -227,7 +227,7 @@ function correctSongNotation(arr) {
   arr.forEach(item => {
     wordsToBeRemoved.forEach(wordToBeRemoved => {
       if (item.songName.includes(wordToBeRemoved)) {
-        songNameList = item.songName.split(`${wordToBeRemoved}`)
+        songNameList = item.songName.split(`${wordToBeRemoved}`);
         //Verwijder haakjes van het liedje
         extractedSongName = songNameList[0].replace("(", "");
 
@@ -281,7 +281,7 @@ function getUserTopArtists() {
     console.log(`\n--- Top Artists from ${userName} in the last ${period} ---------------------------------------------------------`);
     console.log(topUserArtists);
     
-    compareLists(topUserArtists)
+    compareLists(topUserArtists);
   }).catch(err => { 
     console.error(err); 
   });
@@ -302,7 +302,7 @@ function getTopArtistsFromGenre() {
     console.log(`\n--- Top Artists from ${genre} in the last ${period} ---------------------------------------------------------`);
     console.log(topArtistsFromGenre);
 
-    compareLists(topArtistsFromGenre)
+    compareLists(topArtistsFromGenre);
   })
 }
 
@@ -353,7 +353,7 @@ let listsToBeCompared = [];
 function compareLists(arrOfLists) {
 
   //Voegt een lijst toe om die later te vergelijken met een andere lijst
-  listsToBeCompared.push(arrOfLists)
+  listsToBeCompared.push(arrOfLists);
 
   //Als er 2 lijsten zijn om te vergelijken...
   if(listsToBeCompared.length == 2) {
@@ -369,12 +369,12 @@ function compareLists(arrOfLists) {
         if ('songName' in item1 && 'songName' in item2 ) {
            //Als beide nummers dezelfde naam hebben, voeg toe aan sameSongs
           if(item1.songName == item2.songName) {
-            sameSongs.push(item1.songName)
+            sameSongs.push(item1.songName);
           }
         } else {
           //Als beide artiesten dezelfde naam hebben, voeg toe aan sameSongs
           if(item1.artistName == item2.artistName) {
-            sameArtists.push(item1.artistName)
+            sameArtists.push(item1.artistName);
           }
         }
       });
@@ -401,7 +401,7 @@ function compareLists(arrOfLists) {
 
 //Haalt LastFM data op
 function getLastFMData() {
-  let periods = ["overall", "7day", "1month", "3month", "6month", "12month"]
+  let periods = ["overall", "7day", "1month", "3month", "6month", "12month"];
   userName = "ChaibaFM";
   genre = "K-Pop";
   period = periods[5];
@@ -411,9 +411,9 @@ function getLastFMData() {
     setTimeout(() => {
       //Als username en genre ingevuld zijn, limit hoger is dan 0 en period in periods staat, ga verder
       if(userName != "" && limit > 0 && genre != "" && periods.includes(period)) {
-        resolve("Succes")
+        resolve("Succes");
       } else {
-        reject("[!] userName, genre, period of limit is verkeerd of niet ingevuld.")
+        reject("[!] userName, genre, period of limit is verkeerd of niet ingevuld.");
       }
     }, 300);
   });
@@ -430,4 +430,4 @@ function getLastFMData() {
   //Bron https://www.youtube.com/watch?v=DHvZLI7Db8E
 }
 
-getLastFMData()
+getLastFMData();
