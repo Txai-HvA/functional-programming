@@ -1,3 +1,21 @@
+* {
+  margin: 0;
+  padding: 0; 
+}
+
 body {
-  background-color: red;
+  background-color: #fff;
+  font-family: 'Montserrat';
+}
+
+main {
+  padding-top: 20px;
+  height: 100%;
+  margin: 0 10%;
+  background-color: green;
+}
+
+h1 {
+  font-size: 2em;
+  text-align: center;
 }

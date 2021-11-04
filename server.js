@@ -19,8 +19,6 @@ let kledingKleuren = [];
 let sortedList = [];
 let aantalOvereenkomsten = 0;
 let totaalAantalKleren = 0;
-let komenKleurenOvereen = false;
-let overeenkomstenInProcenten = 0;
 let mogelijkeOogKleuren = ["blauw", "bruin", "grijs", "groen"];
 let aantalBlauweOgen = 0;
 let aantalBruineOgen = 0;
@@ -60,12 +58,9 @@ function vervangRareChars() {
 //Bron https://thispointer.com/javascript-check-if-string-contains-special-characters/
 
 
-
-
 let woordenLijst = ["donker", "licht"]
 //Checked of de gegeven value een woord bevat uit de woordenLijst en verwijderd deze
 function verwijderWoorden(string) {
-
   woordenLijst.forEach(woord => {
     if(string.includes(woord)) {
       sortedList = string.split(woord);
@@ -109,11 +104,6 @@ function noteerOogKleurOpDezelfdeManier() {
     nieuweOogKleurNotatie = camelCase(gebruikerOogKleuren[0], {pascalCase: true}) + " - " 
         + camelCase(gebruikerOogKleuren[1], {pascalCase: true});
 
-    oogKleur = nieuweOogKleurNotatie;
-    changeKey(1, oogKleur);
-  } else if (gebruikerOogKleuren.length <= 0) {
-    //Als de oogkleuren lijst leeg is en dus een oogkleur was ingevuld die niet bestaat, verander naar "Geen Antwoord"
-    nieuweOogKleurNotatie = "Geen Antwoord"
     oogKleur = nieuweOogKleurNotatie;
     changeKey(1, oogKleur);
   }
@@ -182,6 +172,7 @@ function telAantalKleurOvereenkomsten() {
 
 //Kijkt of de oogKleur en kleuren van kleding hetzelfde zijn
 function vergelijkKleuren() {
+  let komenKleurenOvereen = false;
   komenKleurenOvereen = String(kledingKleuren).toLowerCase().indexOf(oogKleur.toLowerCase()) >= 0;
   if(komenKleurenOvereen) {
     console.log(`Oogkleur komt WEL overeen met 1 van de kledingstukken.`);
@@ -193,7 +184,7 @@ function vergelijkKleuren() {
 
 //Berekend het aantal procent van overeenkomsten met oogkleur en totaal aantal kleren
 function toonKleurOvereenkomsten() {
-  overeenkomstenInProcenten = (aantalOvereenkomsten / totaalAantalKleren) * 100;
+  let overeenkomstenInProcenten = (aantalOvereenkomsten / totaalAantalKleren) * 100;
   console.log(`${aantalOvereenkomsten}/${totaalAantalKleren} (${overeenkomstenInProcenten.toFixed(2)}%) van alle kleren hebben zelfde kleur als de oogkleur(en) van de gebruikers.`);  
 }
 
@@ -227,10 +218,248 @@ app.get('/', function (req, res) {
 })
 
 
-app.get('/test', function(req, res) { 
-  res.type("text/html"); 
-  res.status(200); 
-  res.send(dataset);
-});
 
 app.listen(3000);
+
+
+
+//LASTFM API
+const API = require('last.fm.api'),
+api = new API({ 
+  apiKey: 'b10dc8ca671bec8f905ba180a76b4706', 
+  apiSecret: '99c51882678becd98387819f8f6a0a83'
+});
+
+//LASTFM variabelen
+let user = {};
+let topUserTracks = [];
+let topTrackFromGenre = [];
+let userName, genre, period, limit;
+
+
+function correctSongNotation(arr) {
+  let wordsToBeRemoved = ["with", "ft.", "ft", "feat", "Feat"];
+  let songNameList, extractedSongName, extractedArtistName;
+  //Als de song titel een artiest bevat verplaats dit naar de artiest naam en haal "with"/"feat."/etc. weg
+  arr.forEach(item => {
+    
+    wordsToBeRemoved.forEach(wordToBeRemoved => {
+      if (item.songName.includes(wordToBeRemoved)) {
+        songNameList = item.songName.split(`${wordToBeRemoved}`)
+        extractedSongName = songNameList[0].replace("(", "");
+
+        //Check als het laatste character een spatie is en verwijder dit
+        if(extractedSongName.substring(extractedSongName.length-1) == " ")
+        {
+          extractedSongName = extractedSongName.substring(0, extractedSongName.length-1);
+        }
+
+        extractedArtistName = songNameList[1].replace(")", "").replace(" ", "").replace(".", "");
+
+        item.songName = extractedSongName;
+        item.artistName = `${item.artistName}, ${extractedArtistName}`;
+      }
+    });
+  });
+}
+
+//Haalt algemene gebruikers info op
+function getUserInfo() {
+  api.user.getInfo({
+    user: userName
+  }).then(tags => { 
+    user = {
+      userName: tags.user.name,
+      country: tags.user.country,
+      playCount: tags.user.playcount
+    };
+    console.log(`\n--- ${userName} info ---------------------------------------------------------`);
+    console.log(user);
+  }).catch(err => { 
+    console.error(err); 
+  });
+}
+
+//Haalt de meest beluisterde artiesten op van de gegeven gebruiker
+function getUserTopArtists() {
+  let topUserArtists = [];
+  api.user.getTopArtists({
+    user: userName,
+    period: period,
+    limit: limit
+  }).then(tags => {
+    tags.topartists.artist.forEach(artist => {
+      topUserArtists.push({
+        artistName: artist.name,
+        playCount: artist.playcount,
+      })
+    });
+    console.log(`\n--- Top Artists from ${userName} in the last 12 months ---------------------------------------------------------`);
+    console.log(topUserArtists);
+    
+    compareLists(topUserArtists)
+  }).catch(err => { 
+    console.error(err); 
+  });
+}
+
+//Haalt de meest beluisterde artiesten op van het gegeven genre
+function getTopArtistsFromGenre() {
+  let topArtistsFromGenre = [];
+  api.tag.getTopArtists({
+    tag: genre,
+    limit: limit
+  }).then(tags => {
+    tags.topartists.artist.forEach(artist => {
+      topArtistsFromGenre.push({
+        artistName: artist.name,
+      })
+    });
+    console.log(`\n--- Top Artists from ${genre} in the last 12 months ---------------------------------------------------------`);
+    console.log(topArtistsFromGenre);
+
+    compareLists(topArtistsFromGenre)
+  })
+}
+
+
+
+
+//Haalt de meest beluisterde liedjes op van de gegeven gebruiker
+function getUserTopTracks() {
+ api.user.getTopTracks({
+    user: userName,
+    period: period,
+    limit: limit
+  }).then(tags => {
+    tags.toptracks.track.forEach(track => {
+      topUserTracks.push({
+        artistName: track.artist.name,
+        songName: track.name,
+        playCount: track.playcount
+      })
+    });
+
+    correctSongNotation(topUserTracks);
+    console.log(`\n--- Top Tracks from ${userName} in the last 12 months ---------------------------------------------------------`);
+    console.log(topUserTracks);
+  }).catch(err => { 
+    console.error(err);
+  });
+}
+
+//Haalt de meest beluisterde liedjes op van het gegeven genre
+function getTopTracksFromGenre() {
+  api.tag.getTopTracks({
+    tag: genre,
+    limit: limit
+  }).then(tags => {
+    tags.tracks.track.forEach(track => {
+      topTrackFromGenre.push({
+        artistName: track.artist.name,
+        songName: track.name
+      })
+    });
+
+    correctSongNotation(topTrackFromGenre);
+    console.log(`\n--- Top Track from ${genre} in the last 12 months ---------------------------------------------------------`);
+    console.log(topTrackFromGenre);
+  })
+}
+
+
+
+
+
+let listsToBeCompared = []; 
+//Vergelijkt 2 lijsten
+function compareLists(arrOfLists) {
+
+  //Voegt een lijst toe om die later te vergelijken met een andere lijst
+  listsToBeCompared.push(arrOfLists)
+
+  //Als er 2 lijsten zijn om te vergelijken...
+  if(listsToBeCompared.length == 2) {
+
+    let list1 = listsToBeCompared[0];
+    let list2 = listsToBeCompared[1];
+    let sameArtists = [];
+    let sameSongs = [];
+    
+    list1.forEach(item1 => {
+      list2.forEach(item2 => {
+
+        //Als item1 en item2 een liedje is...
+        if ('songName' in item1 && 'songName' in item2 ) {
+           //Als beide nummers dezelfde naam hebben, voeg toe aan sameSongs
+          if(item1.songName == item2.songName) {
+            sameSongs.push(item1.songName)
+          }
+        } else {
+          //Als beide artiesten dezelfde naam hebben, voeg toe aan sameSongs
+          if(item1.artistName == item2.artistName) {
+            sameArtists.push(item1.artistName)
+          }
+        }
+      });
+    });
+
+    //Leegt listsToBeCompared, zodat die bij de volgende vergelijking gebruikt kan worden
+    listsToBeCompared.length = 0;
+
+    
+    console.log(`\n--- Artiesten die zowel in jouw top ${limit} staat, als in de ${genre} top ${limit} ---------------------------------------------------------`);
+    if(sameArtists.length > 0) {
+      console.log(sameArtists);
+    } else {
+      console.log("Geen overeenkomsten gevonden.");
+    }
+
+    console.log(`\n--- Nummers die zowel in jouw top ${limit} staat, als in de ${genre} top ${limit} ---------------------------------------------------------`);
+    if(sameSongs.length > 0) {
+      console.log(sameSongs);
+    } else {
+      console.log("Geen overeenkomsten gevonden.");
+    }
+  }
+}
+
+
+//Haalt LastFM data op
+function getLastFMData() {
+
+  let periods = ["overall", "7day", "1month", "3month", "6month", "12month"]
+
+  userName = "ChaibaFM";
+  genre = "K-Pop";
+  period = periods[5];
+  limit = 5;
+
+  const promise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      //Als username en genre ingevuld zijn, limit hoger is dan 0 en period in periods staat, ga verder
+      if(userName != "" && limit > 0 && genre != "" && periods.includes(period)) {
+        resolve("Succes")
+      } else {
+        reject("[!] userName, genre, period of limit is verkeerd of niet ingevuld.")
+      }
+    }, 300);
+  });
+  
+
+  promise
+    .then(getUserInfo())
+    .then(getUserTopArtists())
+    .then(getTopArtistsFromGenre())
+    .then(getUserTopTracks())
+    .then(getTopTracksFromGenre())
+    .catch((message) => {
+      console.log("Error: " + message);
+    })
+
+  //Bron https://www.youtube.com/watch?v=DHvZLI7Db8E
+
+  //TODO console.log(message) van de 2de,3de,4de geven undefined !!!!!!!!!!
+}
+
+getLastFMData()
