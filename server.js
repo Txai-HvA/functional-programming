@@ -5,6 +5,7 @@ const path = require('path');
 const router = express.Router();
 app.use(express.static('public/css'));
 const dotenv = require('dotenv').config()
+app.listen(3000);
 
 const fs = require('fs');
 const jsonString = fs.readFileSync('./tech-track-dataset.json');
@@ -174,19 +175,14 @@ function compareColors() {
   console.log(`Oogkleur komt ${messageWord} overeen met 1 van de kledingstukken.`);
 }
 
-
 //Berekend het aantal overeenkomsten met oogkleur en totaal aantal kleren (+in procenten) 
 function showColorMatches() {
   let overeenkomstenInProcenten = (amountOfMatches / totalAmountOfClothes) * 100;
   console.log(`${amountOfMatches}/${totalAmountOfClothes} (${overeenkomstenInProcenten.toFixed(2)}%) van alle kleren hebben zelfde kleur als de oogkleur(en) van de gebruikers.`);  
 }
 
-
-
-app.get('/', function (req, res) {
-
+function getFirstDataSet() {
   for(i = 0; i < dataset.length; i++) {
-
     console.log(`\n--- Gebruiker ${i+1} ---------------------------------------------------------`);
     old_key = dataset[i];
     new_key = old_key;
@@ -198,22 +194,15 @@ app.get('/', function (req, res) {
     replaceEmptyFields ();
     replaceSpecialCharacters();
 
-    console.log(`Wat is je oogkleur? : ${dataset[i]["Wat is je oogkleur?"]}`);
-    console.log(`Welke kleur kledingstukken heb je aan vandaag? : ${dataset[i][ "Welke kleur kledingstukken heb je aan vandaag? (Meerdere antwoorden mogelijk natuurlijk...)"]}`);
+    console.log(`Wat is je oogkleur? : ${dataset[i]["Wat is je oogkleur?"]}\nWelke kleur kledingstukken heb je aan vandaag? : ${dataset[i][ "Welke kleur kledingstukken heb je aan vandaag? (Meerdere antwoorden mogelijk natuurlijk...)"]}`);
   }
 
   console.log(`\n--- Totaal ---------------------------------------------------------`);
   showAmountOfEyesPerColor();
   showColorMatches();
+}
 
-  //getLastFMData();
-
-  //__dirname zorgt ervoor dat het automatisch naar mijn project folder ga
-  res.sendFile(path.join(__dirname+'/index.html'), dataset);
-})
-
-app.listen(3000);
-
+getFirstDataSet();
 
 
 
@@ -289,7 +278,7 @@ function getUserTopArtists() {
         playCount: artist.playcount,
       })
     });
-    console.log(`\n--- Top Artists from ${userName} in the last 12 months ---------------------------------------------------------`);
+    console.log(`\n--- Top Artists from ${userName} in the last ${period} ---------------------------------------------------------`);
     console.log(topUserArtists);
     
     compareLists(topUserArtists)
@@ -310,15 +299,12 @@ function getTopArtistsFromGenre() {
         artistName: artist.name,
       })
     });
-    console.log(`\n--- Top Artists from ${genre} in the last 12 months ---------------------------------------------------------`);
+    console.log(`\n--- Top Artists from ${genre} in the last ${period} ---------------------------------------------------------`);
     console.log(topArtistsFromGenre);
 
     compareLists(topArtistsFromGenre)
   })
 }
-
-
-
 
 //Haalt de meest beluisterde liedjes op van de gegeven gebruiker
 function getUserTopTracks() {
@@ -336,7 +322,7 @@ function getUserTopTracks() {
     });
 
     correctSongNotation(topUserTracks);
-    console.log(`\n--- Top Tracks from ${userName} in the last 12 months ---------------------------------------------------------`);
+    console.log(`\n--- Top Tracks from ${userName} in the last ${period} ---------------------------------------------------------`);
     console.log(topUserTracks);
   }).catch(err => { 
     console.error(err);
@@ -357,14 +343,10 @@ function getTopTracksFromGenre() {
     });
 
     correctSongNotation(topTrackFromGenre);
-    console.log(`\n--- Top Track from ${genre} in the last 12 months ---------------------------------------------------------`);
+    console.log(`\n--- Top Track from ${genre} in the last ${period} ---------------------------------------------------------`);
     console.log(topTrackFromGenre);
   })
 }
-
-
-
-
 
 let listsToBeCompared = []; 
 //Vergelijkt 2 lijsten
@@ -417,12 +399,9 @@ function compareLists(arrOfLists) {
   }
 }
 
-
 //Haalt LastFM data op
 function getLastFMData() {
-
   let periods = ["overall", "7day", "1month", "3month", "6month", "12month"]
-
   userName = "ChaibaFM";
   genre = "K-Pop";
   period = periods[5];
@@ -438,7 +417,6 @@ function getLastFMData() {
       }
     }, 300);
   });
-  
 
   promise
     .then((message) => { getUserInfo(), console.log(message) })
