@@ -236,16 +236,16 @@ let topUserTracks = [];
 let topTrackFromGenre = [];
 let userName, genre, period, limit;
 
-
+//Corrigeert de notatie van de artiest(en) en het liedje
 function correctSongNotation(arr) {
-  let wordsToBeRemoved = ["with", "ft.", "ft", "feat", "Feat"];
+  let wordsToBeRemoved = ["with", "ft", "feat", "Feat"];
   let songNameList, extractedSongName, extractedArtistName;
   //Als de song titel een artiest bevat verplaats dit naar de artiest naam en haal "with"/"feat."/etc. weg
   arr.forEach(item => {
-    
     wordsToBeRemoved.forEach(wordToBeRemoved => {
       if (item.songName.includes(wordToBeRemoved)) {
         songNameList = item.songName.split(`${wordToBeRemoved}`)
+        //Verwijder haakjes van het liedje
         extractedSongName = songNameList[0].replace("(", "");
 
         //Check als het laatste character een spatie is en verwijder dit
@@ -254,6 +254,7 @@ function correctSongNotation(arr) {
           extractedSongName = extractedSongName.substring(0, extractedSongName.length-1);
         }
 
+        //Verwijder haakjes, spaties en punten van de artiesten naam
         extractedArtistName = songNameList[1].replace(")", "").replace(" ", "").replace(".", "");
 
         item.songName = extractedSongName;
@@ -448,18 +449,15 @@ function getLastFMData() {
   
 
   promise
-    .then(getUserInfo())
-    .then(getUserTopArtists())
-    .then(getTopArtistsFromGenre())
-    .then(getUserTopTracks())
-    .then(getTopTracksFromGenre())
+    .then((message) => { getUserInfo(), console.log(message) })
+    .then((message) => { getUserTopArtists(), console.log(message) })
+    .then((message) => { getTopArtistsFromGenre(), console.log(message) })
+    .then((message) => { getUserTopTracks(), console.log(message) })
+    .then((message) => { getTopTracksFromGenre(), console.log(message) })
     .catch((message) => {
       console.log("Error: " + message);
     })
 
-  //Bron https://www.youtube.com/watch?v=DHvZLI7Db8E
-
-  //TODO console.log(message) van de 2de,3de,4de geven undefined !!!!!!!!!!
 }
 
 getLastFMData()
