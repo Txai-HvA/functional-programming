@@ -13,6 +13,12 @@ This project...
 ![Part of dataset](https://i.gyazo.com/40692fbc9495954b94b367aad6adfc15.png)
 ![Cleaning result](https://i.gyazo.com/0ca16d68e09234f121e19a590aa20932.png)
 
+- gets general user information
+- gets the favorite artists and songs from the given user within a given time period
+- gets the favorite artists and songs from the given genre within a given time period
+- compares the favorite artists and songs from the given user to that of the given genre
+- if an artist is in the song variable, move it next to the artist and remove words like "feat" and "with"
+
 ## Installation
 
 Be sure to have Git installed on your pc.
