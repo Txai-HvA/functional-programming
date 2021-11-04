@@ -14,19 +14,19 @@ const dataset = JSON.parse(jsonString);
 // Variabellen
 let old_key;
 let new_key;
-let aantalGebruikers = 0;
-let oogKleur;
-let kledingKleuren = [];
+let amountOfUsers = 0;
+let eyeColor;
+let clothesColor = [];
 let sortedList = [];
-let aantalOvereenkomsten = 0;
-let totaalAantalKleren = 0;
-let mogelijkeOogKleuren = ["blauw", "bruin", "grijs", "groen"];
-let aantalBlauweOgen = 0;
-let aantalBruineOgen = 0;
-let aantalGrijzeOgen = 0;
-let aantalGroeneOgen = 0;
-let gebruikerOogKleuren = [];
-let veld;
+let amountOfMatches = 0;
+let totalAmountOfClothes = 0;
+let possibleEyeColors = ["blauw", "bruin", "grijs", "groen"];
+let amountOfBlueEyes = 0;
+let amountOfBrownEyes = 0;
+let amountOfGreyEyes = 0;
+let amountOfGreenEyes = 0;
+let userEyeColors = [];
+let field;
 
 // Veranderd de waarde van het gegeven antwoord op een vraag
 function changeKey(index, newValue) {
@@ -35,110 +35,104 @@ function changeKey(index, newValue) {
 }
 
 //Vervangt lege velden met "Geen antwoord"
-function vervangLegeVelden() {
+function replaceEmptyFields () {
   for(j = 0; j < Object.keys(old_key).length; j++) {
-    veld = old_key[Object.keys(old_key)[j]];
-    if(veld == null || veld == "") {
+    field = old_key[Object.keys(old_key)[j]];
+    if(field == null || field == "") {
       changeKey(j, "Geen antwoord");
     }
   }
 }
 
 let filterChars = /[@#$%^&*()_+\=\[\]{};':"\\|<>]+/;
-//Vervangt deze characters met ""
-function vervangRareChars() {
+//Vervangt bovenstaande karakters met ""
+function replaceSpecialCharacters() {
   for(j = 0; j < Object.keys(old_key).length; j++) {
-    veld = old_key[Object.keys(old_key)[j]];
+    field = old_key[Object.keys(old_key)[j]];
 
-    if(filterChars.test(veld)) {
-      veld = veld.replace(filterChars, '');
-      changeKey(j, veld);
+    if(filterChars.test(field)) {
+      field = field.replace(filterChars, '');
+      changeKey(j, field);
      }
   }
 }
 //Bron https://thispointer.com/javascript-check-if-string-contains-special-characters/
 
-
-let woordenLijst = ["donker", "licht"]
-//Checked of de gegeven value een woord bevat uit de woordenLijst en verwijderd deze
-function verwijderWoorden(string) {
-  woordenLijst.forEach(woord => {
-    if(string.includes(woord)) {
-      sortedList = string.split(woord);
-      oogKleur = sortedList[1];
-      changeKey(1, oogKleur);
+let filterList = ["donker", "licht"]
+//Kijkt of de gegeven waarde een woord bevat uit filterList en verwijderd deze
+function filterOutWords(string) {
+  filterList.forEach(word => {
+    if(string.includes(word)) {
+      sortedList = string.split(word);
+      eyeColor = sortedList[1];
+      changeKey(1, eyeColor);
     }
   });
 }
 
-function toonAantalOgenPerKleur() {
-  console.log(`Aantal blauwe ogen: ${aantalBlauweOgen}\nAantal bruine ogen: ${aantalBruineOgen}\nAantal grijze ogen: ${aantalGrijzeOgen}\nAantal groene ogen: ${aantalGroeneOgen}\n`)
-}
-
-
 //Verhoogt het aantal ogen per kleur
-function verhoogOogKleurAantal(kleur) {
-  if(kleur == mogelijkeOogKleuren[0]) {
-    aantalBlauweOgen++;
-  } else if(kleur == mogelijkeOogKleuren[1]) {
-    aantalBruineOgen++;
-  } else if(kleur == mogelijkeOogKleuren[2]) {
-    aantalGrijzeOgen++;
-  } else if(kleur == mogelijkeOogKleuren[3]) {
-    aantalGroeneOgen++;
+function increaseAmountOfEyesColor(color) {
+  if(color == possibleEyeColors[0]) {
+    amountOfBlueEyes++;
+  } else if(color == possibleEyeColors[1]) {
+    amountOfBrownEyes++;
+  } else if(color == possibleEyeColors[2]) {
+    amountOfGreyEyes++;
+  } else if(color == possibleEyeColors[3]) {
+    amountOfGreenEyes++;
   }
 }
 
-//Noteerd oogkleur op dezelfde manier als er 2 kleuren zijn, bijv "Blauw - Groen" inplaats van "groen blauw"
-function noteerOogKleurOpDezelfdeManier() {
+//Toont het aantal ogen per kleur
+function showAmountOfEyesPerColor() {
+  console.log(`Aantal blauwe ogen: ${amountOfBlueEyes}\nAantal bruine ogen: ${amountOfBrownEyes}\nAantal grijze ogen: ${amountOfGreyEyes}\nAantal groene ogen: ${amountOfGreenEyes}\n`)
+}
+
+
+//Noteert oogkleur op dezelfde manier als er 2 kleuren zijn, bijv. "Blauw - Groen" in plaats van "groen blauw"
+function writeEyeColorTheSameWay () {
   //Loop langs alle mogelijke oogkleuren 
-  mogelijkeOogKleuren.forEach(mogelijkeOogKleur => {
-    //Als de gegeven oogkleur een bestaande oogkleur is voeg toe aan array
-    if(oogKleur.indexOf(mogelijkeOogKleur) >= 0) { 
-      gebruikerOogKleuren.push(mogelijkeOogKleur);
-      verhoogOogKleurAantal(mogelijkeOogKleur);
+  possibleEyeColors.forEach(possibleEyeColor => {
+    //Als de gegeven oogkleur een bestaande oogkleur is, voeg toe aan array
+    if(eyeColor.indexOf(possibleEyeColor) >= 0) { 
+      userEyeColors.push(possibleEyeColor);
+      increaseAmountOfEyesColor(possibleEyeColor);
     }
   });
 
   //Als er meerdere oogkleuren zijn, zet er een streepje tussen
-  if(gebruikerOogKleuren.length > 1) {
-    nieuweOogKleurNotatie = camelCase(gebruikerOogKleuren[0], {pascalCase: true}) + " - " 
-        + camelCase(gebruikerOogKleuren[1], {pascalCase: true});
+  if(userEyeColors.length > 1) {
+    newEyeColorNotation = camelCase(userEyeColors[0], {pascalCase: true}) + " - " 
+        + camelCase(userEyeColors[1], {pascalCase: true});
 
-    oogKleur = nieuweOogKleurNotatie;
-    changeKey(1, oogKleur);
+    eyeColor = newEyeColorNotation;
+    changeKey(1, eyeColor);
   }
 
-  gebruikerOogKleuren.length = 0;
+  userEyeColors.length = 0;
 }
 
-function wijzigOogkleur() {
-  //Als het aantalGebruikers lager is dan de lengte van de dataset, ga verder
-  if(aantalGebruikers < dataset.length) { 
-    oogKleur = String(old_key[Object.keys(old_key)[1]]).toLowerCase();
-    verwijderWoorden(oogKleur);
-    //Veranderd de eerste letter van de oogKleur naar een hoofdletter
-    changeKey(1, camelCase(oogKleur, {pascalCase: true}));
-    noteerOogKleurOpDezelfdeManier();
-    aantalGebruikers++;
+//Wijzigt de oogkleur
+function editEyeColor() {
+  //Als het amountOfUsers lager is dan de lengte van de dataset, ga verder
+  if(amountOfUsers < dataset.length) { 
+    eyeColor = String(old_key[Object.keys(old_key)[1]]).toLowerCase();
+    filterOutWords(eyeColor);
+    //Veranderd de eerste letter van eyeColor naar een hoofdletter
+    changeKey(1, camelCase(eyeColor, {pascalCase: true}));
+    writeEyeColorTheSameWay ();
+    amountOfUsers++;
   }
 }
 
-
-
-
-
-
-
-//Sorteert een array op alfabetische volgorde
+//Sorteert een string op alfabetische volgorde en zet het om naar een array
 function sortList(string) {
-  //Checked of het gegeven antwoord komma's bevat en dus een array is
+  //Kijkt of het gegeven antwoord komma's bevat en dus een array is
   if(string.indexOf(',') >= -1) {
     //Split antwoorden op komma
     sortedList = string.split(", ");
     //Zorgt ervoor dat elk woord begint met een hoofdletter
     sortedList = sortedList.map(item => camelCase(item, {pascalCase: true}));
-
     //Sorteert op alfabetische volgorde
     sortedList.sort();
 
@@ -146,36 +140,33 @@ function sortList(string) {
   }
 }
 
-
-function wijzigKledingKleuren() {
-  //Als het aantalGebruikers lager is dan de lengte van de dataset, ga verder
-  if(aantalGebruikers < dataset.length) {
-    kledingKleuren = String(old_key[Object.keys(old_key)[8]]).toLowerCase();
-    kledingKleuren = sortList(kledingKleuren);
-
+//Wijzigt kleding kleuren
+function editClothesColors() {
+  //Als amountOfUsers lager is dan de lengte van de dataset, ga verder
+  if(amountOfUsers < dataset.length) {
+    clothesColor = String(old_key[Object.keys(old_key)[8]]).toLowerCase();
+    clothesColor = sortList(clothesColor);
     //Telt het aantal kleren van de huidige gebruiker op bij het totaal aantal kleren
-    totaalAantalKleren += kledingKleuren.length;
+    totalAmountOfClothes += clothesColor.length;
 
-    changeKey(8, String(kledingKleuren));
+    changeKey(8, String(clothesColor));
   }
 }
 
-
-
 //Telt het aantal kleuren overeenkomsten
-function telAantalKleurOvereenkomsten() { 
-  kledingKleuren.forEach(kledingKleur => {
-    if(oogKleur.toLowerCase() == kledingKleur.toLowerCase()) {
-      aantalOvereenkomsten++;
+function countAmountOfColorMatches() { 
+  clothesColor.forEach(clothesColor => {
+    if(eyeColor.toLowerCase() == clothesColor.toLowerCase()) {
+      amountOfMatches++;
     }
   });
 }
 
-//Kijkt of de oogKleur en kleuren van kleding hetzelfde zijn
-function vergelijkKleuren() {
-  let komenKleurenOvereen = false;
-  komenKleurenOvereen = String(kledingKleuren).toLowerCase().indexOf(oogKleur.toLowerCase()) >= 0;
-  if(komenKleurenOvereen) {
+//Kijkt of oogkleur en kleuren van kleding hetzelfde zijn
+function compareColors() {
+  let doColorsMatch = false;
+  doColorsMatch = String(clothesColor).toLowerCase().indexOf(eyeColor.toLowerCase()) >= 0;
+  if(doColorsMatch) {
     console.log(`Oogkleur komt WEL overeen met 1 van de kledingstukken.`);
   } else {
     console.log("Oogkleur komt NIET overeen met 1 van de kledingstukken.");
@@ -183,10 +174,10 @@ function vergelijkKleuren() {
 }
 
 
-//Berekend het aantal procent van overeenkomsten met oogkleur en totaal aantal kleren
-function toonKleurOvereenkomsten() {
-  let overeenkomstenInProcenten = (aantalOvereenkomsten / totaalAantalKleren) * 100;
-  console.log(`${aantalOvereenkomsten}/${totaalAantalKleren} (${overeenkomstenInProcenten.toFixed(2)}%) van alle kleren hebben zelfde kleur als de oogkleur(en) van de gebruikers.`);  
+//Berekend het aantal overeenkomsten met oogkleur en totaal aantal kleren (+in procenten) 
+function showColorMatches() {
+  let overeenkomstenInProcenten = (amountOfMatches / totalAmountOfClothes) * 100;
+  console.log(`${amountOfMatches}/${totalAmountOfClothes} (${overeenkomstenInProcenten.toFixed(2)}%) van alle kleren hebben zelfde kleur als de oogkleur(en) van de gebruikers.`);  
 }
 
 
@@ -199,26 +190,24 @@ app.get('/', function (req, res) {
     old_key = dataset[i];
     new_key = old_key;
 
-    wijzigOogkleur();
-    wijzigKledingKleuren();
-    telAantalKleurOvereenkomsten();
-    vergelijkKleuren();
-    vervangLegeVelden();
-    vervangRareChars();
+    editEyeColor();
+    editClothesColors();
+    countAmountOfColorMatches();
+    compareColors();
+    replaceEmptyFields ();
+    replaceSpecialCharacters();
 
     console.log(`Wat is je oogkleur? : ${dataset[i]["Wat is je oogkleur?"]}`);
     console.log(`Welke kleur kledingstukken heb je aan vandaag? : ${dataset[i][ "Welke kleur kledingstukken heb je aan vandaag? (Meerdere antwoorden mogelijk natuurlijk...)"]}`);
   }
 
   console.log(`\n--- Totaal ---------------------------------------------------------`);
-  toonAantalOgenPerKleur();
-  toonKleurOvereenkomsten();
+  showAmountOfEyesPerColor();
+  showColorMatches();
 
   //__dirname zorgt ervoor dat het automatisch naar mijn project folder ga
   res.sendFile(path.join(__dirname+'/index.html'), dataset);
 })
-
-
 
 app.listen(3000);
 
